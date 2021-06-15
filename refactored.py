@@ -51,7 +51,8 @@ class fileUploader:
 
             elif choise == 0:
                 fail('For now, Full Upload will only count files in drives and highest sized files.')
-                self.fullUpload()
+                byteLimit = easygui.integerbox('Enter Max Filesize (MegaBytes)', 'File Uploader', 500, 1, 100000)
+                self.fullUpload(byteLimit)
 
             elif choise == 1:
                 self.includeFile()
@@ -126,7 +127,9 @@ class fileUploader:
 
         self.files.append(fileChosen)
 
-    def fullUpload(self):
+    def fullUpload(self, byteLimit):
+        locations = []
+        locationsCount = 0
         drives = []
         count = 0
         highest = 0
@@ -143,11 +146,24 @@ class fileUploader:
                     try:
                         current = os.path.getsize(path + '\\' + name)
                     except:
-                        current = 0
-                    if current>highest:
-                        highest = current
-                        print('New Highest Sized File: ' + path + '\\' + name + ', with the size of: ' + str(highest) + ' bytes')
-                    count += 1
+                        current = byteLimit + 2
+                        #print('Error accessing file: ' + path + '\\' + name)
+                    if current<(byteLimit + 1):
+                        #print(path + '\\' + name)
+                        count += 1
+                        locations.append(path + '\\' + name)
+                        locationsCount += 1
+                    if locationsCount == 300:
+                        with open('locations.txt', 'a') as file:
+                            for location in locations:
+                                file.write(location + '\n\n')
+                        locationsCount = 0
+                        locations = []
+            with open('locations.txt', 'a') as file:
+                for location in locations:
+                    file.write(location + '\n\n')
+            locationsCount = 0
+            locations = []
             print('Files in drive ' + dir[0] + ': ' + str(count))
             count = 0
 
