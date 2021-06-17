@@ -87,7 +87,7 @@ class fileUploader:
 
                     for blackname in blacklist:
                         if blackname.lower() in filePath.lower():
-                            break
+                            break # I don't remember if this is a bug or a feature to pass the whole blacklisted directory
                         else:
                             pass
                     print(self.upload(filePath) + ' ' + filePath)
